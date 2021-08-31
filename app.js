@@ -6,19 +6,21 @@ const privateKey  = fs.readFileSync('key.pem', 'utf8');
 const certificate = fs.readFileSync('cert.pem', 'utf8');
 const credentials = {key: privateKey, cert: certificate};
 const app = require('express')();
-const {INTERCOM_USER, INTERCOM_PASS} = process.env
+const {INTERCOM_USER, INTERCOM_PASS, INTERCOM_PORT} = process.env
 
-app.use(basicAuth({
+let optiosn = {
     users: { [INTERCOM_USER]: `${INTERCOM_PASS}` },
     challenge: true // <--- needed to actually show the login dialog!
-}));
+};
+
+console.log(optiosn)
+app.use(basicAuth(optiosn));
 
 app.get('/', (req, res) => {
-    res.writeHead(200);
     console.log("Received request at URL", req.url)
     shell.exec('./send_curl.sh')
     res.send("Automation triggered")
 })
 
 const httpsServer = https.createServer(credentials, app);
-httpsServer.listen(8008);
+httpsServer.listen(parseInt(INTERCOM_PORT));

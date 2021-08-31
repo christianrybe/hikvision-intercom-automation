@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-ngrok https 8008
+ngrok http "https://localhost:${INTERCOM_PORT}" &
 node app.js
